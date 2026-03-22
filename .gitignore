@@ -1,0 +1,57 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+error.log
+error2.log
+
+# Dependency directories
+node_modules/
+frontend/node_modules/
+
+# Environment variables
+.env
+frontend/.env
+.local
+
+# Build directories
+frontend/dist/
+dist/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Agent/IDE files
+.agents/
+.augment/
+.claude/
+.codebuddy/
+.commandcode/
+.continue/
+.cortex/
+.crush/
+.factory/
+.goose/
+.iflow/
+.junie/
+.kilocode/
+.kiro/
+.kode/
+.mcpjam/
+.mux/
+.neovate/
+.openhands/
+.pi/
+.pochi/
+.qoder/
+.qwen/
+.roo/
+.trae/
+.vibe/
+.windsurf/
+.zencoder/
+.vscode/
+.idea/
