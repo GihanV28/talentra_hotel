@@ -40,8 +40,8 @@ app.get('/', (req, res) => {
   res.status(200).send('Hotel Booking API is running perfectly! (v2)');
 });
 
-// Explicitly parse PORT as a number
-const actualPort = parseInt(process.env.PORT, 10) || 8080;
+// The proxy is explicitly hitting port 3000 on the container, so we must force it here
+const actualPort = 3000;
 
 // Start server (Bind to 0.0.0.0 for Railway IPv4 mesh)
 app.listen(actualPort, '0.0.0.0', () => {
