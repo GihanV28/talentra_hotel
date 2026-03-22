@@ -21,6 +21,12 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
+// Log every request to debug Railway proxy issues
+app.use((req, res, next) => {
+  console.log(`[REQ] Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
 // Routes
 app.use('/api/search', searchRoutes);
 app.use('/api/recommendations', recommendationRoutes);
@@ -31,13 +37,13 @@ app.use('/api/webhooks', webhookRoutes);
 
 // Default route for health checks
 app.get('/', (req, res) => {
-  res.send('Hotel Booking API is running perfectly!');
+  res.status(200).send('Hotel Booking API is running perfectly! (v2)');
 });
 
-// Explicitly parse PORT as a number to prevent binding issues
-const actualPort = parseInt(process.env.PORT, 10) || 3000;
+// Explicitly parse PORT as a number
+const actualPort = parseInt(process.env.PORT, 10) || 8080;
 
-// Start server (Bind to '::' to support Railway's modern IPv6 mesh network)
-app.listen(actualPort, '::', () => {
-  console.log(`✅ Server running securely on port ${actualPort}`);
+// Start server (Bind to 0.0.0.0 for Railway IPv4 mesh)
+app.listen(actualPort, '0.0.0.0', () => {
+  console.log(`✅ Server securely bound and running on port ${actualPort}`);
 });
