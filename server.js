@@ -29,7 +29,12 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/webhooks', webhookRoutes);
 
-// Start server
-app.listen(PORT, () => {
+// Default route for health checks
+app.get('/', (req, res) => {
+  res.send('Hotel Booking API is running perfectly!');
+});
+
+// Start server (Explicitly bind to 0.0.0.0 for Railway)
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
