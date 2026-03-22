@@ -6,6 +6,47 @@ import {
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/recommendations/similar/{hotelId}:
+ *   get:
+ *     summary: Get hotels similar to the specified hotel
+ *     tags: [Recommendations]
+ *     parameters:
+ *       - in: path
+ *         name: hotelId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the hotel
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 5
+ *         description: Number of recommendations to return
+ *     responses:
+ *       200:
+ *         description: Similar hotels returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 count:
+ *                   type: integer
+ *                 recommendations:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Hotel'
+ *       404:
+ *         description: Hotel not found
+ *       500:
+ *         description: Failed to get recommendations
+ */
 router.get('/similar/:hotelId', async (req, res) => {
   try {
     const { hotelId } = req.params;
@@ -41,6 +82,39 @@ router.get('/similar/:hotelId', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/recommendations/personalized:
+ *   post:
+ *     summary: Get personalized hotel recommendations
+ *     tags: [Recommendations]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             description: User preferences object
+ *     responses:
+ *       200:
+ *         description: Personalized recommendations returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 recommendations:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Hotel'
+ *                 explanation:
+ *                   type: string
+ *       500:
+ *         description: Failed to get personalized recommendations
+ */
 router.post('/personalized', async (req, res) => {
   try {
     const userPreferences = req.body;

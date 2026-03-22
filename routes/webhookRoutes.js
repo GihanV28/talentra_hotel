@@ -4,6 +4,33 @@ import Booking from '../models/Booking.js';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/webhooks/stripe:
+ *   post:
+ *     summary: Stripe webhook endpoint for payment status updates
+ *     tags: [Webhooks]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             description: Raw Stripe webhook payload
+ *     responses:
+ *       200:
+ *         description: Webhook processed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 received:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Webhook signature verification failed
+ */
 router.post(
   '/stripe',
   express.raw({ type: 'application/json' }),

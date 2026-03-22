@@ -5,6 +5,68 @@ import Hotel from '../models/Hotel.js';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /api/payments/create-payment-intent:
+ *   post:
+ *     summary: Create a Stripe payment intent for hotel booking
+ *     tags: [Payments]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - hotelId
+ *               - checkIn
+ *               - checkOut
+ *               - guests
+ *             properties:
+ *               hotelId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the hotel
+ *               checkIn:
+ *                 type: string
+ *                 format: date
+ *                 description: Check-in date (ISO string)
+ *               checkOut:
+ *                 type: string
+ *                 format: date
+ *                 description: Check-out date (ISO string)
+ *               guests:
+ *                 type: integer
+ *                 description: Number of guests
+ *               userId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the user (optional)
+ *     responses:
+ *       200:
+ *         description: Payment intent created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 clientSecret:
+ *                   type: string
+ *                 bookingId:
+ *                   type: string
+ *                 amount:
+ *                   type: number
+ *                 currency:
+ *                   type: string
+ *                   example: LKR
+ *       400:
+ *         description: Missing required booking details or validation error
+ *       404:
+ *         description: Hotel not found
+ *       500:
+ *         description: Failed to create payment intent
+ */
 router.post('/create-payment-intent', async (req, res) => {
   try {
     const { hotelId, checkIn, checkOut, guests, userId } = req.body;
@@ -110,6 +172,40 @@ router.post('/create-payment-intent', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/payments/intent/{paymentIntentId}:
+ *   get:
+ *     summary: Get the status of a Stripe payment intent
+ *     tags: [Payments]
+ *     parameters:
+ *       - in: path
+ *         name: paymentIntentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Stripe payment intent ID
+ *     responses:
+ *       200:
+ *         description: Payment intent status retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status:
+ *                   type: string
+ *                 amount:
+ *                   type: number
+ *                 currency:
+ *                   type: string
+ *                   example: LKR
+ *       500:
+ *         description: Error retrieving payment intent
+ */
 router.get('/intent/:paymentIntentId', async (req, res) => {
   try {
     const { paymentIntentId } = req.params;

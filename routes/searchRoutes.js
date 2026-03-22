@@ -5,8 +5,49 @@ import { parseSearchQuery, buildDatabaseQuery } from '../services/aiSearch.js';
 const router = express.Router();
 
 /**
- * POST /api/search/ai
- * Natural language hotel search
+ * @swagger
+ * /api/search/ai:
+ *   post:
+ *     summary: Natural language hotel search
+ *     tags: [Search]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - query
+ *             properties:
+ *               query:
+ *                 type: string
+ *                 description: Natural language search query
+ *                 example: "Find me a cheap hotel in Colombo"
+ *     responses:
+ *       200:
+ *         description: Search results returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 query:
+ *                   type: string
+ *                 parsedParams:
+ *                   type: object
+ *                 count:
+ *                   type: integer
+ *                 results:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Hotel'
+ *       400:
+ *         description: Query string is required
+ *       500:
+ *         description: Search failed
  */
 router.post('/ai', async (req, res) => {
   try {
@@ -53,8 +94,27 @@ router.post('/ai', async (req, res) => {
 });
 
 /**
- * GET /api/search/suggestions
- * Get search suggestions/examples
+ * @swagger
+ * /api/search/suggestions:
+ *   get:
+ *     summary: Get search suggestions/examples
+ *     tags: [Search]
+ *     responses:
+ *       200:
+ *         description: Search suggestions returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 suggestions:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example: ["Find me a cheap hotel in Colombo", "Luxury hotel with spa in Kandy"]
  */
 router.get('/suggestions', (req, res) => {
   const suggestions = [

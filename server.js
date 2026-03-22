@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import connectDB from './db/connection.js';
 import searchRoutes from './routes/searchRoutes.js';
 import recommendationRoutes from './routes/recommendationRoutes.js';
@@ -14,12 +16,142 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Swagger definition
+const swaggerDefinition = {
+  openapi: '3.0.0',
+  info: {
+    title: 'Hotel Booking System API',
+    version: '1.0.0',
+    description: 'API documentation for the Hotel Booking System',
+  },
+  servers: [
+    {
+      url: 'https://talentrahotel-production.up.railway.app',
+      description: 'Production server',
+    },
+    {
+      url: 'http://localhost:3000',
+      description: 'Development server',
+    },
+  ],
+  components: {
+    schemas: {
+      Hotel: {
+        type: 'object',
+        properties: {
+          _id: {
+            type: 'string',
+            description: 'MongoDB ObjectId'
+          },
+          name: {
+            type: 'string',
+            description: 'Hotel name'
+          },
+          city: {
+            type: 'string',
+            description: 'Hotel city'
+          },
+          price: {
+            type: 'number',
+            description: 'Hotel price per night'
+          },
+          rating: {
+            type: 'number',
+            description: 'Hotel rating'
+          },
+          description: {
+            type: 'string',
+            description: 'Hotel description'
+          },
+          available: {
+            type: 'boolean',
+            description: 'Hotel availability'
+          },
+          amenities: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            description: 'Hotel amenities'
+          }
+        }
+      },
+      Booking: {
+        type: 'object',
+        properties: {
+          _id: {
+            type: 'string',
+            description: 'MongoDB ObjectId'
+          },
+          hotel: {
+            type: 'string',
+            description: 'Hotel ObjectId reference'
+          },
+          user: {
+            type: 'string',
+            description: 'User ObjectId reference (optional)'
+          },
+          checkIn: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Check-in date'
+          },
+          checkOut: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Check-out date'
+          },
+          guests: {
+            type: 'integer',
+            description: 'Number of guests'
+          },
+          totalAmount: {
+            type: 'number',
+            description: 'Total booking amount'
+          },
+          status: {
+            type: 'string',
+            enum: ['pending', 'confirmed', 'cancelled'],
+            description: 'Booking status'
+          },
+          paymentStatus: {
+            type: 'string',
+            enum: ['pending', 'succeeded', 'failed', 'canceled'],
+            description: 'Payment status'
+          },
+          stripePaymentIntentId: {
+            type: 'string',
+            description: 'Stripe payment intent ID'
+          },
+          paidAt: {
+            type: 'string',
+            format: 'date-time',
+            description: 'Payment completion date'
+          }
+        }
+      }
+    }
+  }
+};
+
+// Swagger options
+const swaggerOptions = {
+  swaggerDefinition,
+  apis: ['./routes/*.js'], // Path to the API routes
+};
+
+// Initialize swagger-jsdoc
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
 // Database connection
 connectDB();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Swagger middleware
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Log every request to debug Railway proxy issues
 app.use((req, res, next) => {
