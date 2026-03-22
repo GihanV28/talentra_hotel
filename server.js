@@ -34,7 +34,10 @@ app.get('/', (req, res) => {
   res.send('Hotel Booking API is running perfectly!');
 });
 
-// Start server (Explicitly bind to 0.0.0.0 for Railway)
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Server running on port ${PORT}`);
+// Explicitly parse PORT as a number to prevent binding issues
+const actualPort = parseInt(process.env.PORT, 10) || 3000;
+
+// Start server (Bind to '::' to support Railway's modern IPv6 mesh network)
+app.listen(actualPort, '::', () => {
+  console.log(`✅ Server running securely on port ${actualPort}`);
 });
